@@ -1,0 +1,184 @@
+<html ng-app="contactManagerApp">
+<head>
+    <meta content="text/html; charset=UTF-8" />
+    <title>Контакты</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link href='./css/bootstrap.css' rel="stylesheet" type="text/css" />
+    <link href='./css/main.css' rel="stylesheet" type="text/css" />
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.js"></script>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.2.4.js"></script>
+    <script type="text/javascript" src="./js/app.js"></script>
+</head>
+
+<body ng-controller="ContactCtrl">
+
+<div class="container" style="margin-top: 20px">
+    <div class="panel panel-default">
+
+        <div class="panel-heading">
+            <h1 style="text-align: center">Список контактов</h1>
+        </div>
+        <div class = "pull-right" style="margin: 10px">
+            <button type="button" class="btn btn-success" ng-click="newContact()">
+            <i class="glyphicon glyphicon-plus"></i> Добавить контакт</button>
+        </div>
+
+        <div class="panel-body">
+        <table class="table table-striped" style="text-align: center">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Имя</th>
+                <th>Телефон</th>
+                <th>Email</th>
+                <th class="cell-edit"></th>
+                <th class="cell-delete"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr ng-repeat="contact in contacts">
+                <td class="cell-num">{{$index+1}}</td>
+                <td>{{contact.name}}</td>
+                <td class="cell-tel">{{contact.tel}}</td>
+                <td class="cell-email">{{contact.email}}</td>
+                <td><button ng-click="edit(contact.uuid)" class="btn btn-warning">Редактировать</button></td>
+                <td><button ng-click="delete(contact.uuid)" class="btn btn-danger">Удалить</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="parent-popup" ng-show="showEditContact">
+        <div class="popup">
+            <div class="modal-content">
+                <form name="form" >
+
+                    <div class="modal-header">
+                    <button type="button"
+                        class="close"
+                        ng-click="cancel()"
+                        data-dismiss="modal"
+                        aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Редактировать запись</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                            <label class="col-lg-3 control-label">Имя:</label>
+                                <div class="col-lg-8">
+                                    <input type="text"
+                                           class="form-control"
+                                           ng-model="selectedcontact.name"
+                                           ng-required="true"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">Номер телефона:</label>
+                                <div class="col-lg-8">
+                                    <input type="text"
+                                           class="form-control"
+                                           ng-model="selectedcontact.tel"
+                                           ng-required="true"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">Email:</label>
+                                <div class="col-lg-8">
+                                    <input type="text"
+                                           class="form-control"
+                                           ng-model="selectedcontact.email"
+                                           ng-required="true"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button"
+                        ng-click="save()"
+                        class="btn btn-success">
+                        Сохранить
+                        </button>
+                        <button type="button"
+                        ng-click="cancel()"
+                        class="btn btn-danger">
+                        Отмена
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="parent-popup" ng-show="showNewContact">
+        <div class="popup">
+            <div class="modal-content">
+                <form name="form" >
+                    <div class="modal-header">
+                        <button type="button"
+                                class="close"
+                                ng-click="cancel()"
+                                data-dismiss="modal"
+                                aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Добавить новую запись</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">Имя:</label>
+                                <div class="col-lg-8">
+                                    <input type="text"
+                                           class="form-control"
+                                           ng-model="newcontact.name"
+                                           ng-required="true"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">Номер телефона:</label>
+                                <div class="col-lg-8">
+                                    <input type="text"
+                                           class="form-control"
+                                           ng-model="newcontact.tel"
+                                           ng-required="true"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label">Email:</label>
+                                    <div class="col-lg-8">
+                                        <input type="text"
+                                               class="form-control"
+                                               ng-model="newcontact.email"
+                                               ng-required="true"/>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button"
+                                ng-click="add()"
+                                ng-disabled="form.$invalid"
+                                class="btn btn-success">
+                                Добавить
+                        </button>
+                        <button type="button"
+                                ng-click="cancel()"
+                                class="btn btn-danger">
+                                Отмена
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>
